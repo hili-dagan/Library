@@ -10,6 +10,8 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.google.android.material.button.MaterialButton;
+
 public class MainActivity extends AppCompatActivity {
 
     @Override
@@ -22,19 +24,20 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        Button btnNewUser = findViewById(R.id.btnNewUser);
-        Button btnExistingUser = findViewById(R.id.btnExistingUser);
+        // שימוש ב-MaterialButton בדיוק כמו ב-XML
+        MaterialButton btnNewUser = findViewById(R.id.btnNewUser);
+        MaterialButton btnExistingUser = findViewById(R.id.btnExistingUser);
 
+        // מעבר למסך הרשמה למשתמש חדש
         btnNewUser.setOnClickListener(v -> {
-            // מעבר  --- למסך הרשמה למשתמש חדש
-            // Intent intent = new Intent(LoginChoiceActivity.this, RegisterActivity.class);
-           // startActivity(intent);
+            Intent intent = new Intent(MainActivity.this, RegisterActivity.class);
+            startActivity(intent);
         });
 
+        // מעבר למסך התחברות למשתמש קיים
         btnExistingUser.setOnClickListener(v -> {
-            // מעבר למסך התחברות למשתמש קיים
-           //  Intent intent = new Intent(LoginChoiceActivity.this, LoginActivity.class);
-           //  startActivity(intent);
+            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+            startActivity(intent);
         });
 
 
