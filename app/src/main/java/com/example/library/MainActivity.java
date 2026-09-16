@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
         Button btnExistingUser = findViewById(R.id.btnExistingUser);
 
         btnNewUser.setOnClickListener(v -> {
-            // מעבר  ---- למסך הרשמה למשתמש חדש
+            // מעבר  --- למסך הרשמה למשתמש חדש
             // Intent intent = new Intent(LoginChoiceActivity.this, RegisterActivity.class);
            // startActivity(intent);
         });
