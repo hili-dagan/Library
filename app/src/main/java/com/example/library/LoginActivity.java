@@ -1,5 +1,6 @@
 package com.example.library;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -56,10 +57,10 @@ public class LoginActivity extends AppCompatActivity {
                             // הצלחה! המשתמש התחבר בהצלחה
                             Toast.makeText(this, "התחברת בהצלחה!", Toast.LENGTH_SHORT).show();
 
-                            // כאן אפשר לעבור למסך הראשי (MainActivity)
-                            // Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                            // startActivity(intent);
-                            // finish();
+                            // מעבר למסך הבית (HomeScreen)
+                            Intent intent = new Intent(LoginActivity.this, HomeScreen.class);
+                            startActivity(intent);
+                            finish(); // סגירת מסך ההתחברות כדי שהמשתמש לא יחזור אליו אחורה
 
                         } else {
                             // אם ההתחברות נכשלה (סיסמה שגויה או משתמש לא קיים)
