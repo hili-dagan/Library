@@ -1,5 +1,6 @@
 package com.example.library;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -62,8 +63,10 @@ public class RegisterActivity extends AppCompatActivity {
                             // הצלחה! החשבון נוצר ונשמר בשרת של פיירבייס
                             Toast.makeText(this, "החשבון נוצר בהצלחה!", Toast.LENGTH_SHORT).show();
 
-                            // כאן אפשר להוסיף בהמשך מעבר למסך הראשי או חזרה להתחברות
-                            finish();
+                            // מעבר למסך ההתחברות (LoginActivity)
+                            Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+                            startActivity(intent);
+                            finish(); // סגירת מסך ההרשמה כדי שהמשתמש לא יוכל לחזור אליו אחורה עם כפתור החזרה
                         } else {
                             // אם הייתה שגיאה (למשל אימייל שכבר קיים במערכת)
                             Toast.makeText(this, "שגיאה בהרשמה: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
