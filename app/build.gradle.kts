@@ -41,7 +41,7 @@ dependencies {
     implementation(libs.activity)
     implementation(libs.constraintlayout)
     implementation(libs.firebase.auth)
-    implementation(libs.credentials)
+    implementation("com.google.firebase:firebase-firestore")
     implementation(libs.credentials.play.services.auth)
     implementation(libs.googleid)
     testImplementation(libs.junit)
