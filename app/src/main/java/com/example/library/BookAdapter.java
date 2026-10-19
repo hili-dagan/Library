@@ -12,43 +12,58 @@ import java.util.List;
 
 public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookViewHolder> {
 
-    // משתנה ששומר את רשימת הספרים
-    private List<String> bookList;
+    // ממשק להעברת אירוע הבלחיצה אל ה-Activity
+    public interface OnBookClickListener {
+        void onBookClick(Book book);
+    }
 
-    // בנאי (Constructor) - מקבל את רשימת הספרים מבחוץ ומאתחל אותם באדפטר
-    public BookAdapter(List<String> bookList) {
+    private List<Book> bookList;
+    private OnBookClickListener listener;
+
+    public BookAdapter(List<Book> bookList, OnBookClickListener listener) {
         this.bookList = bookList;
+        this.listener = listener;
     }
 
     @NonNull
     @Override
-    // פעולה מרכזית 1: יוצרת את התבנית החזותית של שורה בודדת (מחברת את קובץ ה-XML של הפריט)
     public BookViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_book, parent, false);
         return new BookViewHolder(view);
     }
 
     @Override
-    // פעולה מרכזית 2: מקשרת ומכניסה את הנתונים האמיתיים (שם הספר) לתוך הרכיבים הגרפיים עבור כל שורה לפי המיקום שלה
     public void onBindViewHolder(@NonNull BookViewHolder holder, int position) {
-        String bookTitle = bookList.get(position);
-        holder.textViewBookTitle.setText(bookTitle);
+        Book book = bookList.get(position);
+        holder.tvBookTitle.setText(book.getTitle());
+
+        // הצגת כותב/עמודים במידה ויש תת-כותרת
+        if (book.getAuthor() != null && !book.getAuthor().isEmpty()) {
+            holder.tvBookSubtitle.setText("מאת: " + book.getAuthor());
+        } else {
+            holder.tvBookSubtitle.setText("לחצי לצפייה בפרטים");
+        }
+
+        // לחיצה על כל השורה במסך
+        holder.itemView.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onBookClick(book);
+            }
+        });
     }
 
     @Override
-    // פעולה מרכזית 3: מחזירה את כמות הפריטים הכוללת ברשימה, כדי שהרשימה תדע כמה שורות לייצר
     public int getItemCount() {
         return bookList.size();
     }
 
-    // מחלקה פנימית שאחראית לשמור את ההפניות לרכיבי ה-UI של השורה (כדי לחסוך חיפושים בזיכרון)
     public static class BookViewHolder extends RecyclerView.ViewHolder {
-        TextView textViewBookTitle;
+        TextView tvBookTitle, tvBookSubtitle;
 
         public BookViewHolder(@NonNull View itemView) {
             super(itemView);
-            // קישור בין משתנה ה-Java לרכיב ה-TextView מתוך קובץ ה-XML
-            textViewBookTitle = itemView.findViewById(R.id.tvBookTitle);
+            tvBookTitle = itemView.findViewById(R.id.tvBookTitle);
+            tvBookSubtitle = itemView.findViewById(R.id.tvBookSubtitle);
         }
     }
 }
