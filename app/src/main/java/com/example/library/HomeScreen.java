@@ -15,8 +15,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.FirebaseFirestore;//
-import com.google.firebase.firestore.QueryDocumentSnapshot;//
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,43 +62,42 @@ public class HomeScreen extends AppCompatActivity {
             Intent intent = new Intent(HomeScreen.this, AddBookActivity.class);
             startActivity(intent);
         });
+
+        // טעינת הספרים בזמן אמת
+        loadUserBooks();
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        // בדיקה מי המשתמש שמחובר כרגע ושлиפת הספרים שלו מחדש בכל פעם שהמסך חוזר לפוקוס (למשל אחרי הוספת ספר)
+    private void loadUserBooks() {
         FirebaseUser currentUser = mAuth.getCurrentUser();
-        if (currentUser != null) {
-            String currentUserId = currentUser.getUid();
-            loadUserBooks(currentUserId);
-        } else {
-            // אם אין משתמש מחובר, החזרה למסך ההתחברות
+        if (currentUser == null) {
+            // אם אין משתמש מחובר, חזרה למסך ההתחברות
             Intent intent = new Intent(HomeScreen.this, LoginActivity.class);
             startActivity(intent);
             finish();
+            return;
         }
-    }
 
-    private void loadUserBooks(String userId) {
-        // שאילתה מול CloudFirestore: שליפת כל הספרים שבהם שדה ה-userId שווה בדיוק ל-UID של המשתמש הנוכחי
+        String userId = currentUser.getUid();
+
+        // שימוש ב-addSnapshotListener כדי שהספרים יופיעו מיד ברגע שמוסיפים אותם!
         db.collection("books")
                 .whereEqualTo("userId", userId)
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
+                .addSnapshotListener((value, error) -> {
+                    if (error != null) {
+                        Toast.makeText(this, "שגיאה בטעינת הספרים: " + error.getMessage(), Toast.LENGTH_LONG).show();
+                        return;
+                    }
+
+                    if (value != null) {
                         bookList.clear();
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            // שליפת שם הספר מתוך המסמך
+                        for (QueryDocumentSnapshot document : value) {
                             String title = document.getString("title");
                             if (title != null) {
                                 bookList.add(title);
                             }
                         }
-                        // עדכון ה-Adapter שהגיעו נתונים חדשים כדי שירענן את הרשימה במסך
+                        // עדכון ה-Adapter שהגיעו נתונים חדשים
                         bookAdapter.notifyDataSetChanged();
-                    } else {
-                        Toast.makeText(this, "שגיאה בטעינת הספרים: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
                     }
                 });
     }
