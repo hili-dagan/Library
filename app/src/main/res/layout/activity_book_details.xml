@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#0A192F"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="פרטי הספר"
+            android:textColor="#FFFFFF"
+            android:textSize="26sp"
+            android:textStyle="bold"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="20dp" />
+
+        <!-- תמונת הספר והכפתורים להעלאה/צילום -->
+        <ImageView
+            android:id="@+id/ivBookCover"
+            android:layout_width="140dp"
+            android:layout_height="180dp"
+            android:layout_gravity="center_horizontal"
+            android:scaleType="centerCrop"
+            android:src="@android:drawable/ic_menu_agenda"
+            android:background="#1A2236"
+            android:contentDescription="Book Cover" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:orientation="horizontal"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="20dp">
+
+            <Button
+                android:id="@+id/btnCamera"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="צלם תמונה"
+                android:layout_marginEnd="8dp"
+                android:backgroundTint="#25314C" />
+
+            <Button
+                android:id="@+id/btnGallery"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="מהגלרייה"
+                android:backgroundTint="#25314C" />
+        </LinearLayout>
+
+        <!-- שדות הזנה וצפייה -->
+        <EditText
+            android:id="@+id/etTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="שם הספר"
+            android:textColorHint="#AECBFA"
+            android:textColor="#FFFFFF"
+            android:layout_marginBottom="12dp" />
+
+        <EditText
+            android:id="@+id/etAuthor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="שם הכותב/ת"
+            android:textColorHint="#AECBFA"
+            android:textColor="#FFFFFF"
+            android:layout_marginBottom="12dp" />
+
+        <EditText
+            android:id="@+id/etTotalPages"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="מספר עמודים כולל"
+            android:inputType="number"
+            android:textColorHint="#AECBFA"
+        android:textColor="#FFFFFF"
+        android:layout_marginBottom="12dp" />
+
+        <EditText
+            android:id="@+id/etCurrentPage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="עמוד נוכחי שהגעת אליו"
+            android:inputType="number"
+            android:textColorHint="#AECBFA"
+            android:textColor="#FFFFFF"
+            android:layout_marginBottom="24dp" />
+
+        <Button
+            android:id="@+id/btnSave"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:text="עדכן פרטים"
+            android:textSize="18sp"
+            android:backgroundTint="#3D5AFE" />
+
+    </LinearLayout>
+</ScrollView>
