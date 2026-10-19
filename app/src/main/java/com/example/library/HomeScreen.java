@@ -29,7 +29,8 @@ public class HomeScreen extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
 
-    private List<String> bookList;
+    // שינוי ל-List של אובייקטי Book ולא סתם מחרוזות טקסט
+    private List<Book> bookList;
     private BookAdapter bookAdapter;
 
     @Override
@@ -51,10 +52,17 @@ public class HomeScreen extends AppCompatActivity {
         recyclerViewBooks = findViewById(R.id.recyclerViewBooks);
         fabAddBook = findViewById(R.id.fabAddBook);
 
-        // הגדרת ה-RecyclerView וה-Adapter
+        // הגדרת ה-RecyclerView וה-Adapter עם האזנה ללחיצה על ספר
         recyclerViewBooks.setLayoutManager(new LinearLayoutManager(this));
         bookList = new ArrayList<>();
-        bookAdapter = new BookAdapter(bookList);
+
+        // כאן משולבת השורה המעודקת שמעבירה את הרשימה ואת פעולת הלחיצה למסך הפרטים!
+        bookAdapter = new BookAdapter(bookList, book -> {
+            Intent intent = new Intent(HomeScreen.this, BookDetailsActivity.class);
+            intent.putExtra("BOOK_ID", book.getId());
+            startActivity(intent);
+        });
+
         recyclerViewBooks.setAdapter(bookAdapter);
 
         // האזנה ללחיצה על הכפתור הצף (+) מעבר למסך הוספת ספר
@@ -91,10 +99,10 @@ public class HomeScreen extends AppCompatActivity {
                     if (value != null) {
                         bookList.clear();
                         for (QueryDocumentSnapshot document : value) {
-                            String title = document.getString("title");
-                            if (title != null) {
-                                bookList.add(title);
-                            }
+                            // המרת המסמך ישירות לאובייקט Book
+                            Book book = document.toObject(Book.class);
+                            book.setId(document.getId()); // שמירת מזהה המסמך לצורך מעבר למסך הפרטים
+                            bookList.add(book);
                         }
                         // עדכון ה-Adapter שהגיעו נתונים חדשים
                         bookAdapter.notifyDataSetChanged();
