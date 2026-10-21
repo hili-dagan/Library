@@ -15,8 +15,6 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -54,7 +52,7 @@ public class BookDetailsActivity extends AppCompatActivity {
                         android.graphics.Bitmap imageBitmap = (android.graphics.Bitmap) extras.get("data");
                         ivBookCover.setImageBitmap(imageBitmap); // הצגת התמונה שצולמה
 
-                        // הערה: אם נרצה לשמור את הצילום מהמצלמה ישירות, נמיר אותו בהמשך ל-Uri או ל-Bytes
+                        // הערה: אם תרצי בהמשך לשמור Bitmap מקומי, אפשר להמיר אותו ל-Uri, אך כרגע הגלרייה נותנת Uri נוח יותר.
                     }
                 }
             }
@@ -85,13 +83,13 @@ public class BookDetailsActivity extends AppCompatActivity {
 
         btnSave.setOnClickListener(v -> saveBookDetails());
 
-        // מאזין לכפתור המצלמה - פותח את אפליקציית המצלמה במכשיר
+        // מאזין לכפתור המצלמה
         btnCamera.setOnClickListener(v -> {
             Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             cameraLauncher.launch(takePictureIntent);
         });
 
-        // מאזין לכפתור הגלרייה - פותח את אלבום התמונות במכשיר
+        // מאזין לכפתור הגלרייה
         btnGallery.setOnClickListener(v -> {
             Intent pickPhotoIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             galleryLauncher.launch(pickPhotoIntent);
@@ -115,40 +113,22 @@ public class BookDetailsActivity extends AppCompatActivity {
                 .addOnFailureListener(e -> Toast.makeText(this, "שגיאה בטעינת הנתונים", Toast.LENGTH_SHORT).show());
     }
 
-    // עדכון השינויים ב-Firestore (כולל בדיקה האם נבחרה תמונה חדשה להעלאה לענן)
+    // עדכון השינויים ב-Firestore (שמירה מקומית של נתוני הטקסט וה-Uri של התמונה)
     private void saveBookDetails() {
         String title = etTitle.getText().toString().trim();
         String author = etAuthor.getText().toString().trim();
         int totalPages = etTotalPages.getText().toString().isEmpty() ? 0 : Integer.parseInt(etTotalPages.getText().toString().trim());
         int currentPage = etCurrentPage.getText().toString().isEmpty() ? 0 : Integer.parseInt(etCurrentPage.getText().toString().trim());
 
-        // אם המשתמש בחר תמונה חדשה מהגלרייה, נעלה אותה קודם ל-Firebase Storage
-        if (imageUri != null) {
-            StorageReference storageRef = FirebaseStorage.getInstance().getReference();
-            StorageReference imageRef = storageRef.child("book_covers/" + bookId + ".jpg");
-
-            imageRef.putFile(imageUri)
-                    .addOnSuccessListener(taskSnapshot -> imageRef.getDownloadUrl().addOnSuccessListener(downloadUri -> {
-                        String imageUrl = downloadUri.toString();
-                        // שמירת הנתונים יחד עם קישור התמונה ב-Firestore
-                        updateBookDataInFirestore(title, author, totalPages, currentPage, imageUrl);
-                    }))
-                    .addOnFailureListener(e -> Toast.makeText(this, "שגיאה בהעלאת התמונה", Toast.LENGTH_SHORT).show());
-        } else {
-            // עדכון רגיל בלי להחליף תמונה
-            updateBookDataInFirestore(title, author, totalPages, currentPage, null);
-        }
-    }
-
-    private void updateBookDataInFirestore(String title, String author, int totalPages, int currentPage, String imageUrl) {
         Map<String, Object> updates = new HashMap<>();
         updates.put("title", title);
         updates.put("author", author);
         updates.put("totalPages", totalPages);
         updates.put("currentPage", currentPage);
 
-        if (imageUrl != null) {
-            updates.put("coverImageUrl", imageUrl); // שומר את כתובת התמונה בענן אם קיימת
+        // אם המשתמש בחר תמונה חדשה מהגלרייה, נשמור את הכתובת המקומית שלה
+        if (imageUri != null) {
+            updates.put("coverImageUrl", imageUri.toString());
         }
 
         db.collection("books").document(bookId).update(updates)

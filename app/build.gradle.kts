@@ -42,7 +42,6 @@ dependencies {
     implementation(libs.constraintlayout)
     implementation(libs.firebase.auth)
     implementation("com.google.firebase:firebase-firestore:25.1.2")
-    implementation("com.google.firebase:firebase-storage:20.3.0")
     implementation(libs.credentials.play.services.auth)
     implementation(libs.googleid)
     testImplementation(libs.junit)
