@@ -10,15 +10,13 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -51,12 +49,12 @@ public class BookDetailsActivity extends AppCompatActivity {
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
                 if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
-                    // המצלמה מחזירה תמונה מוקטנת (Bitmap) בתוך ה-Extras
                     Bundle extras = result.getData().getExtras();
                     if (extras != null && extras.get("data") != null) {
                         android.graphics.Bitmap imageBitmap = (android.graphics.Bitmap) extras.get("data");
                         ivBookCover.setImageBitmap(imageBitmap); // הצגת התמונה שצולמה
-                        // הערה: בהמשך נשמור את ה-Bitmap או ה-Uri ב-Firebase Storage
+
+                        // הערה: אם נרצה לשמור את הצילום מהמצלמה ישירות, נמיר אותו בהמשך ל-Uri או ל-Bytes
                     }
                 }
             }
@@ -87,8 +85,7 @@ public class BookDetailsActivity extends AppCompatActivity {
 
         btnSave.setOnClickListener(v -> saveBookDetails());
 
-
-// מאזין לכפתור המצלמה - פותח את אפליקציית המצלמה במכשיר
+        // מאזין לכפתור המצלמה - פותח את אפליקציית המצלמה במכשיר
         btnCamera.setOnClickListener(v -> {
             Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             cameraLauncher.launch(takePictureIntent);
@@ -118,18 +115,41 @@ public class BookDetailsActivity extends AppCompatActivity {
                 .addOnFailureListener(e -> Toast.makeText(this, "שגיאה בטעינת הנתונים", Toast.LENGTH_SHORT).show());
     }
 
-    // עדכון השינויים ב-Firestore
+    // עדכון השינויים ב-Firestore (כולל בדיקה האם נבחרה תמונה חדשה להעלאה לענן)
     private void saveBookDetails() {
         String title = etTitle.getText().toString().trim();
         String author = etAuthor.getText().toString().trim();
         int totalPages = etTotalPages.getText().toString().isEmpty() ? 0 : Integer.parseInt(etTotalPages.getText().toString().trim());
         int currentPage = etCurrentPage.getText().toString().isEmpty() ? 0 : Integer.parseInt(etCurrentPage.getText().toString().trim());
 
+        // אם המשתמש בחר תמונה חדשה מהגלרייה, נעלה אותה קודם ל-Firebase Storage
+        if (imageUri != null) {
+            StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+            StorageReference imageRef = storageRef.child("book_covers/" + bookId + ".jpg");
+
+            imageRef.putFile(imageUri)
+                    .addOnSuccessListener(taskSnapshot -> imageRef.getDownloadUrl().addOnSuccessListener(downloadUri -> {
+                        String imageUrl = downloadUri.toString();
+                        // שמירת הנתונים יחד עם קישור התמונה ב-Firestore
+                        updateBookDataInFirestore(title, author, totalPages, currentPage, imageUrl);
+                    }))
+                    .addOnFailureListener(e -> Toast.makeText(this, "שגיאה בהעלאת התמונה", Toast.LENGTH_SHORT).show());
+        } else {
+            // עדכון רגיל בלי להחליף תמונה
+            updateBookDataInFirestore(title, author, totalPages, currentPage, null);
+        }
+    }
+
+    private void updateBookDataInFirestore(String title, String author, int totalPages, int currentPage, String imageUrl) {
         Map<String, Object> updates = new HashMap<>();
         updates.put("title", title);
         updates.put("author", author);
         updates.put("totalPages", totalPages);
         updates.put("currentPage", currentPage);
+
+        if (imageUrl != null) {
+            updates.put("coverImageUrl", imageUrl); // שומר את כתובת התמונה בענן אם קיימת
+        }
 
         db.collection("books").document(bookId).update(updates)
                 .addOnSuccessListener(aVoid -> {
