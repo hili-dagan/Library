@@ -25,11 +25,11 @@ public class HomeScreen extends AppCompatActivity {
 
     private RecyclerView recyclerViewBooks;
     private FloatingActionButton fabAddBook;
+    private FloatingActionButton btnProfile; // עודכן ל-FloatingActionButton
 
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
 
-    // שינוי ל-List של אובייקטי Book ולא סתם מחרוזות טקסט
     private List<Book> bookList;
     private BookAdapter bookAdapter;
 
@@ -51,12 +51,12 @@ public class HomeScreen extends AppCompatActivity {
         // קישור רכיבי ה-UI מתוך ה-XML
         recyclerViewBooks = findViewById(R.id.recyclerViewBooks);
         fabAddBook = findViewById(R.id.fabAddBook);
+        btnProfile = findViewById(R.id.btnProfile); // אתחול כפתור הפרופיל הצף
 
         // הגדרת ה-RecyclerView וה-Adapter עם האזנה ללחיצה על ספר
         recyclerViewBooks.setLayoutManager(new LinearLayoutManager(this));
         bookList = new ArrayList<>();
 
-        // כאן משולבת השורה המעודקת שמעבירה את הרשימה ואת פעולת הלחיצה למסך הפרטים!
         bookAdapter = new BookAdapter(bookList, book -> {
             Intent intent = new Intent(HomeScreen.this, BookDetailsActivity.class);
             intent.putExtra("BOOK_ID", book.getId());
@@ -71,6 +71,12 @@ public class HomeScreen extends AppCompatActivity {
             startActivity(intent);
         });
 
+        // האזנה ללחיצה על כפתור הפרופיל הצף מעבר למסך הפרופיל
+        btnProfile.setOnClickListener(v -> {
+            Intent intent = new Intent(HomeScreen.this, ProfileActivity.class);
+            startActivity(intent);
+        });
+
         // טעינת הספרים בזמן אמת
         loadUserBooks();
     }
@@ -78,7 +84,6 @@ public class HomeScreen extends AppCompatActivity {
     private void loadUserBooks() {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser == null) {
-            // אם אין משתמש מחובר, חזרה למסך ההתחברות
             Intent intent = new Intent(HomeScreen.this, LoginActivity.class);
             startActivity(intent);
             finish();
@@ -87,7 +92,6 @@ public class HomeScreen extends AppCompatActivity {
 
         String userId = currentUser.getUid();
 
-        // שימוש ב-addSnapshotListener כדי שהספרים יופיעו מיד ברגע שמוסיפים אותם!
         db.collection("books")
                 .whereEqualTo("userId", userId)
                 .addSnapshotListener((value, error) -> {
@@ -99,12 +103,10 @@ public class HomeScreen extends AppCompatActivity {
                     if (value != null) {
                         bookList.clear();
                         for (QueryDocumentSnapshot document : value) {
-                            // המרת המסמך ישירות לאובייקט Book
                             Book book = document.toObject(Book.class);
-                            book.setId(document.getId()); // שמירת מזהה המסמך לצורך מעבר למסך הפרטים
+                            book.setId(document.getId());
                             bookList.add(book);
                         }
-                        // עדכון ה-Adapter שהגיעו נתונים חדשים
                         bookAdapter.notifyDataSetChanged();
                     }
                 });
