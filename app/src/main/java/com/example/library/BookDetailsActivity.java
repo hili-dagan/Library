@@ -64,7 +64,7 @@ public class BookDetailsActivity extends AppCompatActivity {
                         Bitmap imageBitmap = (Bitmap) extras.get("data");
                         ivBookCover.setImageBitmap(imageBitmap);
 
-                        // המרת צילום המצלמה לקובץ מקומי ושמירת ה-Uri שלו כדי שיוכל להיդבר במסד הנתונים
+                        // המרת צילום המצלמה לקובץ מקומי ושמירת ה-Uri שלו
                         imageUri = saveBitmapLocally(imageBitmap);
                     }
                 }
@@ -144,7 +144,20 @@ public class BookDetailsActivity extends AppCompatActivity {
                         if (currentPage != null) etCurrentPage.setText(String.valueOf(currentPage));
 
                         etGenre.setText(documentSnapshot.getString("genre"));
-                        etStatus.setText(documentSnapshot.getString("status"));
+
+                        // המרת סטטוס שמור באנגלית לטקסט ידידותי בעברית כשמציגים במסך (אופציונלי ונוח)
+                        String savedStatus = documentSnapshot.getString("status");
+                        if (savedStatus != null) {
+                            if (savedStatus.equals("finished")) {
+                                etStatus.setText("סיימתי");
+                            } else if (savedStatus.equals("reading")) {
+                                etStatus.setText("קורא");
+                            } else if (savedStatus.equals("want_to_read")) {
+                                etStatus.setText("לקריאה");
+                            } else {
+                                etStatus.setText(savedStatus);
+                            }
+                        }
 
                         // שליפת נתיב התמונה המקומי שנשמר ב-Firestore והצגתו ב-ImageView
                         String savedImageUrl = documentSnapshot.getString("coverImageUrl");
@@ -164,7 +177,20 @@ public class BookDetailsActivity extends AppCompatActivity {
         int totalPages = etTotalPages.getText().toString().isEmpty() ? 0 : Integer.parseInt(etTotalPages.getText().toString().trim());
         int currentPage = etCurrentPage.getText().toString().isEmpty() ? 0 : Integer.parseInt(etCurrentPage.getText().toString().trim());
         String genre = etGenre.getText().toString().trim();
-        String status = etStatus.getText().toString().trim();
+
+        // קליטת הסטטוס שהמשתמש כתב והמרה חכמה לאנגלית עבור מסד הנתונים
+        String rawStatus = etStatus.getText().toString().trim().toLowerCase();
+        String dbStatus = "reading"; // ברירת מחדל
+
+        if (rawStatus.contains("סיימתי") || rawStatus.contains("finish")) {
+            dbStatus = "finished";
+        } else if (rawStatus.contains("קורא") || rawStatus.contains("read")) {
+            dbStatus = "reading";
+        } else if (rawStatus.contains("לקריאה") || rawStatus.contains("want")) {
+            dbStatus = "want_to_read";
+        } else {
+            dbStatus = rawStatus; // גיבוי אם המשתמש הקליד משהו אחר
+        }
 
         String currentUserId = mAuth.getCurrentUser() != null ? mAuth.getCurrentUser().getUid() : "";
 
@@ -176,7 +202,7 @@ public class BookDetailsActivity extends AppCompatActivity {
         updates.put("totalPages", totalPages);
         updates.put("currentPage", currentPage);
         updates.put("genre", genre);
-        updates.put("status", status);
+        updates.put("status", dbStatus); // שומר את הסטטוס המתוקן ("finished")
 
         // אם יש תמונה (מהגלרייה או מהמצלמה), נשמור את המחרוזת של ה-Uri במסד הנתונים
         if (imageUri != null) {
