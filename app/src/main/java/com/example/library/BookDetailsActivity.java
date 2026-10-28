@@ -2,6 +2,7 @@ package com.example.library;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -17,12 +18,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
 public class BookDetailsActivity extends AppCompatActivity {
 
-    private EditText etTitle, etAuthor, etTotalPages, etCurrentPage;
+    private EditText etTitle, etAuthor, etTotalPages, etCurrentPage, etGenre, etStatus;
     private ImageView ivBookCover;
     private Button btnSave, btnCamera, btnGallery;
 
@@ -30,7 +33,6 @@ public class BookDetailsActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private String bookId;
 
-    // משתנה לשמירת ה-Uri המקומי של התמונה שנבחרה או צולמה
     private Uri imageUri;
 
     // משגר לפתיחת הגלרייה ובחירת תמונה
@@ -39,20 +41,31 @@ public class BookDetailsActivity extends AppCompatActivity {
             result -> {
                 if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
                     imageUri = result.getData().getData();
-                    ivBookCover.setImageURI(imageUri); // הצגת התמונה שנבחרה על גבי ה-ImageView
+                    if (imageUri != null) {
+                        try {
+                            final int takeFlags = Intent.FLAG_GRANT_READ_URI_PERMISSION;
+                            getContentResolver().takePersistableUriPermission(imageUri, takeFlags);
+                        } catch (SecurityException e) {
+                            e.printStackTrace();
+                        }
+                        ivBookCover.setImageURI(imageUri);
+                    }
                 }
             }
     );
 
-    // משגר לפתיחת המצלמה וצילום תמונה
+    // משגר לפתיחת המצלמה ושמירת הצילום כקובץ מקומי
     private final ActivityResultLauncher<Intent> cameraLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
                 if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
                     Bundle extras = result.getData().getExtras();
                     if (extras != null && extras.get("data") != null) {
-                        android.graphics.Bitmap imageBitmap = (android.graphics.Bitmap) extras.get("data");
-                        ivBookCover.setImageBitmap(imageBitmap); // הצגת התמונה שצולמה
+                        Bitmap imageBitmap = (Bitmap) extras.get("data");
+                        ivBookCover.setImageBitmap(imageBitmap);
+
+                        // המרת צילום המצלמה לקובץ מקומי ושמירת ה-Uri שלו כדי שיוכל להיդבר במסד הנתונים
+                        imageUri = saveBitmapLocally(imageBitmap);
                     }
                 }
             }
@@ -70,12 +83,13 @@ public class BookDetailsActivity extends AppCompatActivity {
         etAuthor = findViewById(R.id.etAuthor);
         etTotalPages = findViewById(R.id.etTotalPages);
         etCurrentPage = findViewById(R.id.etCurrentPage);
+        etGenre = findViewById(R.id.etGenre);
+        etStatus = findViewById(R.id.etStatus);
         ivBookCover = findViewById(R.id.ivBookCover);
         btnSave = findViewById(R.id.btnSave);
         btnCamera = findViewById(R.id.btnCamera);
         btnGallery = findViewById(R.id.btnGallery);
 
-        // קבלת מזהה הספר (Document ID) שנשלח מהמסך הקודם
         bookId = getIntent().getStringExtra("BOOK_ID");
 
         if (bookId != null) {
@@ -84,65 +98,96 @@ public class BookDetailsActivity extends AppCompatActivity {
 
         btnSave.setOnClickListener(v -> saveBookDetails());
 
-        // מאזין לכפתור המצלמה
         btnCamera.setOnClickListener(v -> {
             Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             cameraLauncher.launch(takePictureIntent);
         });
 
-        // מאזין לכפתור הגלרייה
         btnGallery.setOnClickListener(v -> {
-            Intent pickPhotoIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            Intent pickPhotoIntent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+            pickPhotoIntent.addCategory(Intent.CATEGORY_OPENABLE);
+            pickPhotoIntent.setType("image/*");
             galleryLauncher.launch(pickPhotoIntent);
         });
     }
 
-    // טעינת פרטי הספר מ-Firestore ושיבוצם בתיבות הטקסט
+    // פונקציית עזר לשמירת תמונת מצלמה בזיכרון המקומי של האפליקציה והחזרת ה-Uri שלה
+    private Uri saveBitmapLocally(Bitmap bitmap) {
+        try {
+            File imagesFolder = new File(getFilesDir(), "book_covers");
+            if (!imagesFolder.exists()) {
+                imagesFolder.mkdirs();
+            }
+            File file = new File(imagesFolder, "cover_" + System.currentTimeMillis() + ".jpg");
+            FileOutputStream fos = new FileOutputStream(file);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 90, fos);
+            fos.close();
+            return Uri.fromFile(file);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    // טעינת פרטי הספר מ-Firestore והצגת התמונה המקומית על המסך
     private void loadBookDetails() {
         db.collection("books").document(bookId).get()
                 .addOnSuccessListener(documentSnapshot -> {
                     if (documentSnapshot.exists()) {
-                        Book book = documentSnapshot.toObject(Book.class);
-                        if (book != null) {
-                            etTitle.setText(book.getTitle());
-                            etAuthor.setText(book.getAuthor());
-                            etTotalPages.setText(String.valueOf(book.getTotalPages()));
-                            etCurrentPage.setText(String.valueOf(book.getCurrentPage()));
+                        etTitle.setText(documentSnapshot.getString("title"));
+                        etAuthor.setText(documentSnapshot.getString("author"));
+
+                        Long totalPages = documentSnapshot.getLong("totalPages");
+                        if (totalPages != null) etTotalPages.setText(String.valueOf(totalPages));
+
+                        Long currentPage = documentSnapshot.getLong("currentPage");
+                        if (currentPage != null) etCurrentPage.setText(String.valueOf(currentPage));
+
+                        etGenre.setText(documentSnapshot.getString("genre"));
+                        etStatus.setText(documentSnapshot.getString("status"));
+
+                        // שליפת נתיב התמונה המקומי שנשמר ב-Firestore והצגתו ב-ImageView
+                        String savedImageUrl = documentSnapshot.getString("coverImageUrl");
+                        if (savedImageUrl != null && !savedImageUrl.isEmpty()) {
+                            imageUri = Uri.parse(savedImageUrl);
+                            ivBookCover.setImageURI(imageUri);
                         }
                     }
                 })
                 .addOnFailureListener(e -> Toast.makeText(this, "שגיאה בטעינת הנתונים", Toast.LENGTH_SHORT).show());
     }
 
-    // עדכון פרטי הספר ב-Firestore לפי המבנה הנדרש
+    // שמירת הנתונים וכתובת התמונה המקומית ב-Firestore
     private void saveBookDetails() {
         String title = etTitle.getText().toString().trim();
         String author = etAuthor.getText().toString().trim();
         int totalPages = etTotalPages.getText().toString().isEmpty() ? 0 : Integer.parseInt(etTotalPages.getText().toString().trim());
         int currentPage = etCurrentPage.getText().toString().isEmpty() ? 0 : Integer.parseInt(etCurrentPage.getText().toString().trim());
+        String genre = etGenre.getText().toString().trim();
+        String status = etStatus.getText().toString().trim();
 
-        // וידוא שהמשתמש מחובר ויש לו userId
         String currentUserId = mAuth.getCurrentUser() != null ? mAuth.getCurrentUser().getUid() : "";
 
         Map<String, Object> updates = new HashMap<>();
-        updates.put("bookId", bookId);             // מזהה ייחודי לספר
-        updates.put("userId", currentUserId);      // מזהה המשתמש המחובר למניעת ערבוב נתונים
-        updates.put("title", title);               // שם הספר (לשימוש גם בהתראות)
-        updates.put("author", author);             // שם המחבר/ת
-        updates.put("totalPages", totalPages);     // סך הכל עמודים
-        updates.put("currentPage", currentPage);   // עמוד נוכחי שהמשתמש הגיע אליו
+        updates.put("bookId", bookId);
+        updates.put("userId", currentUserId);
+        updates.put("title", title);
+        updates.put("author", author);
+        updates.put("totalPages", totalPages);
+        updates.put("currentPage", currentPage);
+        updates.put("genre", genre);
+        updates.put("status", status);
 
-        // שמירת נתיב התמונה המקומי אם נבחרה תמונה חדשה
+        // אם יש תמונה (מהגלרייה או מהמצלמה), נשמור את המחרוזת של ה-Uri במסד הנתונים
         if (imageUri != null) {
             updates.put("coverImageUrl", imageUri.toString());
         }
 
-        // ביצוע העדכון במסמך הספציפי ב-Firestore לפי ה-Document ID
         db.collection("books").document(bookId).update(updates)
                 .addOnSuccessListener(aVoid -> {
-                    Toast.makeText(this, "הפרטים עודכנו בהצלחה!", Toast.LENGTH_SHORT).show();
-                    finish(); // סגירת המסך וחזרה למסך הבית
+                    Toast.makeText(this, "הפרטים והתמונה נשמרו בהצלחה!", Toast.LENGTH_SHORT).show();
+                    finish();
                 })
-                .addOnFailureListener(e -> Toast.makeText(this, "שגיאה בעידכון הנתונים", Toast.LENGTH_SHORT).show());
+                .addOnFailureListener(e -> Toast.makeText(this, "שגיאה בעדכון הנתונים", Toast.LENGTH_SHORT).show());
     }
 }
