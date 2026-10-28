@@ -14,6 +14,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
@@ -26,9 +27,10 @@ public class BookDetailsActivity extends AppCompatActivity {
     private Button btnSave, btnCamera, btnGallery;
 
     private FirebaseFirestore db;
+    private FirebaseAuth mAuth;
     private String bookId;
 
-    // משתנה לשמירת ה-Uri של התמונה שנבחרה או צולמה
+    // משתנה לשמירת ה-Uri המקומי של התמונה שנבחרה או צולמה
     private Uri imageUri;
 
     // משגר לפתיחת הגלרייה ובחירת תמונה
@@ -51,8 +53,6 @@ public class BookDetailsActivity extends AppCompatActivity {
                     if (extras != null && extras.get("data") != null) {
                         android.graphics.Bitmap imageBitmap = (android.graphics.Bitmap) extras.get("data");
                         ivBookCover.setImageBitmap(imageBitmap); // הצגת התמונה שצולמה
-
-                        // הערה: אם תרצי בהמשך לשמור Bitmap מקומי, אפשר להמיר אותו ל-Uri, אך כרגע הגלרייה נותנת Uri נוח יותר.
                     }
                 }
             }
@@ -64,6 +64,7 @@ public class BookDetailsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_book_details);
 
         db = FirebaseFirestore.getInstance();
+        mAuth = FirebaseAuth.getInstance();
 
         etTitle = findViewById(R.id.etTitle);
         etAuthor = findViewById(R.id.etAuthor);
@@ -74,7 +75,7 @@ public class BookDetailsActivity extends AppCompatActivity {
         btnCamera = findViewById(R.id.btnCamera);
         btnGallery = findViewById(R.id.btnGallery);
 
-        // קבלת מזהה הספר שנשלח מ-HomeScreen
+        // קבלת מזהה הספר (Document ID) שנשלח מהמסך הקודם
         bookId = getIntent().getStringExtra("BOOK_ID");
 
         if (bookId != null) {
@@ -113,24 +114,30 @@ public class BookDetailsActivity extends AppCompatActivity {
                 .addOnFailureListener(e -> Toast.makeText(this, "שגיאה בטעינת הנתונים", Toast.LENGTH_SHORT).show());
     }
 
-    // עדכון השינויים ב-Firestore (שמירה מקומית של נתוני הטקסט וה-Uri של התמונה)
+    // עדכון פרטי הספר ב-Firestore לפי המבנה הנדרש
     private void saveBookDetails() {
         String title = etTitle.getText().toString().trim();
         String author = etAuthor.getText().toString().trim();
         int totalPages = etTotalPages.getText().toString().isEmpty() ? 0 : Integer.parseInt(etTotalPages.getText().toString().trim());
         int currentPage = etCurrentPage.getText().toString().isEmpty() ? 0 : Integer.parseInt(etCurrentPage.getText().toString().trim());
 
-        Map<String, Object> updates = new HashMap<>();
-        updates.put("title", title);
-        updates.put("author", author);
-        updates.put("totalPages", totalPages);
-        updates.put("currentPage", currentPage);
+        // וידוא שהמשתמש מחובר ויש לו userId
+        String currentUserId = mAuth.getCurrentUser() != null ? mAuth.getCurrentUser().getUid() : "";
 
-        // אם המשתמש בחר תמונה חדשה מהגלרייה, נשמור את הכתובת המקומית שלה
+        Map<String, Object> updates = new HashMap<>();
+        updates.put("bookId", bookId);             // מזהה ייחודי לספר
+        updates.put("userId", currentUserId);      // מזהה המשתמש המחובר למניעת ערבוב נתונים
+        updates.put("title", title);               // שם הספר (לשימוש גם בהתראות)
+        updates.put("author", author);             // שם המחבר/ת
+        updates.put("totalPages", totalPages);     // סך הכל עמודים
+        updates.put("currentPage", currentPage);   // עמוד נוכחי שהמשתמש הגיע אליו
+
+        // שמירת נתיב התמונה המקומי אם נבחרה תמונה חדשה
         if (imageUri != null) {
             updates.put("coverImageUrl", imageUri.toString());
         }
 
+        // ביצוע העדכון במסמך הספציפי ב-Firestore לפי ה-Document ID
         db.collection("books").document(bookId).update(updates)
                 .addOnSuccessListener(aVoid -> {
                     Toast.makeText(this, "הפרטים עודכנו בהצלחה!", Toast.LENGTH_SHORT).show();
