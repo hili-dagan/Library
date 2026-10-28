@@ -96,6 +96,26 @@
             android:textColor="#FFFFFF"
             android:layout_marginBottom="24dp" />
 
+        <!-- ז'אנר הספר -->
+        <EditText
+            android:id="@+id/etGenre"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="ז'אנר הספר (למשל: פנטזיה, מתח)"
+            android:textColorHint="#AECBFA"
+            android:textColor="#FFFFFF"
+            android:layout_marginBottom="12dp" />
+
+        <!-- סטטוס קריאה -->
+        <EditText
+            android:id="@+id/etStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="סטטוס קריאה (wantToRead / reading / finished)"
+            android:textColorHint="#AECBFA"
+            android:textColor="#FFFFFF"
+            android:layout_marginBottom="24dp" />
+
         <Button
             android:id="@+id/btnSave"
             android:layout_width="match_parent"
@@ -103,6 +123,8 @@
             android:text="עדכן פרטים"
             android:textSize="18sp"
             android:backgroundTint="#3D5AFE" />
+
+
 
     </LinearLayout>
 </ScrollView>
