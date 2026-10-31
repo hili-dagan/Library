@@ -1,7 +1,31 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
+    <!-- מצב כהה: אותה ערכת נושא, הצבעים מתחלפים אוטומטית מ-values-night/colors.xml -->
     <style name="Base.Theme.Library" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your dark theme here. -->
-        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+        <item name="colorPrimary">@color/lib_primary</item>
+        <item name="colorOnPrimary">@color/lib_on_primary</item>
+        <item name="colorPrimaryContainer">@color/lib_primary_soft</item>
+        <item name="colorOnPrimaryContainer">@color/lib_primary</item>
+        <item name="colorSecondary">@color/lib_accent</item>
+        <item name="colorOnSecondary">@color/lib_on_accent</item>
+        <item name="colorSecondaryContainer">@color/lib_accent_soft</item>
+        <item name="colorOnSecondaryContainer">@color/lib_text</item>
+        <item name="colorError">@color/lib_danger</item>
+
+        <item name="android:colorBackground">@color/lib_bg</item>
+        <item name="colorSurface">@color/lib_surface</item>
+        <item name="colorOnSurface">@color/lib_text</item>
+        <item name="colorSurfaceVariant">@color/lib_surface_alt</item>
+        <item name="colorOnSurfaceVariant">@color/lib_text_muted</item>
+        <item name="colorOutline">@color/lib_outline</item>
+        <item name="colorOutlineVariant">@color/lib_outline</item>
+
+        <item name="android:windowBackground">@color/lib_bg</item>
+        <item name="android:statusBarColor">@color/lib_bg</item>
+        <item name="android:windowLightStatusBar">false</item>
+
+        <item name="materialButtonStyle">@style/Widget.Library.Button</item>
+        <item name="materialButtonOutlinedStyle">@style/Widget.Library.Button.Outlined</item>
+        <item name="textInputStyle">@style/Widget.Library.TextInput</item>
+        <item name="materialCardViewStyle">@style/Widget.Library.Card</item>
     </style>
 </resources>

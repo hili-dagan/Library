@@ -1,79 +1,106 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- מסך הבית: רשימת הספרים של המשתמש -->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#0A192F"
+    android:background="@color/lib_bg"
+    android:layoutDirection="rtl"
     tools:context=".HomeScreen">
 
-    <!-- סרגל כותרת נקי (בלי כפתור פרופיל למעלה) -->
+    <!-- כותרת עליונה -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/clHeader"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="#132F4C"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingStart="24dp"
+        android:paddingTop="20dp"
+        android:paddingEnd="20dp"
+        android:paddingBottom="8dp"
         app:layout_constraintEnd_toEndOf="parent"
-        android:elevation="8dp">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/tvEyebrow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="מדף הקריאה"
+            android:textAllCaps="false"
+            android:textAppearance="@style/TextAppearance.Library.Label"
+            android:textColor="@color/lib_accent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/tvFragmentTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:layout_marginEnd="12dp"
+            android:text="הספרייה שלי"
+            android:textAppearance="@style/TextAppearance.Library.Display"
+            app:layout_constraintEnd_toStartOf="@+id/btnProfile"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvEyebrow" />
+
+        <TextView
+            android:id="@+id/tvHomeSubtitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="12dp"
+            android:text="כל הספרים שלך, במקום אחד"
+            android:textAppearance="@style/TextAppearance.Library.Body"
+            app:layout_constraintEnd_toStartOf="@+id/btnProfile"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvFragmentTitle" />
+
+        <!-- כפתור פרופיל -->
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/btnProfile"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="sans-serif-medium"
-            android:text="הספרייה שלי"
-            android:textColor="#FFFFFF"
-            android:textSize="22sp"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:contentDescription="פרופיל משתמש"
+            app:backgroundTint="@color/lib_surface_alt"
+            app:elevation="0dp"
+            app:fabCustomSize="48dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_lib_person"
+            app:tint="@color/lib_primary" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <!-- רשימת הספרים (RecyclerView) -->
+    <!-- רשימת הספרים -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewBooks"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:clipToPadding="false"
-        android:paddingTop="12dp"
-        android:paddingBottom="100dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="112dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/clHeader"
         tools:listitem="@layout/item_book" />
 
-    <!-- כפתור הוספת ספר צף (+) -->
+    <!-- כפתור הוספת ספר -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabAddBook"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="24dp"
         android:layout_marginBottom="24dp"
-        android:backgroundTint="#3D5AFE"
-        app:tint="#FFFFFF"
-        android:contentDescription="הוסף ספר"
-        app:srcCompat="@android:drawable/ic_input_add"
+        android:contentDescription="הוספת ספר"
+        app:backgroundTint="@color/lib_accent"
+        app:fabCustomSize="64dp"
+        app:maxImageSize="28dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <!-- כפתור פרופיל צף (נמצא ממש ליד כפתור הוספת הספרים) -->
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/btnProfile"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="24dp"
-        android:backgroundTint="#132F4C"
-        app:tint="#FFFFFF"
-        android:contentDescription="פרופיל משתמש"
-        app:srcCompat="@android:drawable/ic_menu_myplaces"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/fabAddBook" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/ic_lib_add"
+        app:tint="@color/lib_on_accent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

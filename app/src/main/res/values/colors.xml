@@ -2,4 +2,32 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <!-- פלטת "ספרייה": נייר חם, ירוק ספרייה עמוק, ענבר של מנורת קריאה -->
+    <color name="lib_bg">#F7F2EA</color>
+    <color name="lib_surface">#FFFDF9</color>
+    <color name="lib_surface_alt">#EFE7DA</color>
+    <color name="lib_outline">#E4DACB</color>
+
+    <color name="lib_text">#1F1B16</color>
+    <color name="lib_text_muted">#6E6558</color>
+
+    <color name="lib_primary">#1E4D40</color>
+    <color name="lib_primary_dark">#143A30</color>
+    <color name="lib_on_primary">#FFFFFF</color>
+    <color name="lib_primary_soft">#DCEAE3</color>
+
+    <color name="lib_accent">#C8792F</color>
+    <color name="lib_on_accent">#FFFFFF</color>
+    <color name="lib_accent_soft">#F6E3CC</color>
+
+    <color name="lib_danger">#B3402F</color>
+    <color name="lib_danger_soft">#F6DDD8</color>
+
+    <!-- צבעי שדרות ספרים (קישוט במסך הפתיחה) -->
+    <color name="lib_spine_1">#1E4D40</color>
+    <color name="lib_spine_2">#C8792F</color>
+    <color name="lib_spine_3">#8C3B2E</color>
+    <color name="lib_spine_4">#34506B</color>
+    <color name="lib_spine_5">#D9B36C</color>
 </resources>

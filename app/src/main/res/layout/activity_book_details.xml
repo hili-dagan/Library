@@ -1,126 +1,241 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- מסך פרטי ספר: צפייה ועריכה -->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#0A192F"
-    android:fillViewport="true">
+    android:background="@color/lib_bg"
+    android:fillViewport="true"
+    android:fitsSystemWindows="true"
+    android:layoutDirection="rtl"
+    tools:context=".BookDetailsActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="24dp">
+        android:paddingStart="20dp"
+        android:paddingTop="24dp"
+        android:paddingEnd="20dp"
+        android:paddingBottom="32dp">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="פרטי הספר"
-            android:textColor="#FFFFFF"
-            android:textSize="26sp"
-            android:textStyle="bold"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="20dp" />
+            android:layout_marginStart="4dp"
+            android:text="הספר שלי"
+            android:textAppearance="@style/TextAppearance.Library.Label"
+            android:textColor="@color/lib_accent" />
 
-        <!-- תמונת הספר והכפתורים להעלאה/צילום -->
-        <ImageView
-            android:id="@+id/ivBookCover"
-            android:layout_width="140dp"
-            android:layout_height="180dp"
-            android:layout_gravity="center_horizontal"
-            android:scaleType="centerCrop"
-            android:src="@android:drawable/ic_menu_agenda"
-            android:background="#1A2236"
-            android:contentDescription="Book Cover" />
-
-        <LinearLayout
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="2dp"
+            android:text="פרטי הספר"
+            android:textAppearance="@style/TextAppearance.Library.Title" />
+
+        <!-- כריכת הספר -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="140dp"
+            android:layout_height="200dp"
             android:layout_gravity="center_horizontal"
-            android:orientation="horizontal"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="20dp">
+            android:layout_marginTop="24dp"
+            app:cardCornerRadius="14dp"
+            app:cardElevation="10dp"
+            app:strokeWidth="0dp">
 
-            <Button
+            <ImageView
+                android:id="@+id/ivBookCover"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:contentDescription="כריכת הספר"
+                android:scaleType="centerCrop"
+                android:src="@drawable/placeholder_book_cover" />
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- כפתורי תמונה -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnCamera"
-                android:layout_width="wrap_content"
+                style="@style/Widget.Library.Button.Tonal"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="צלם תמונה"
-                android:layout_marginEnd="8dp"
-                android:backgroundTint="#25314C" />
+                android:layout_marginEnd="6dp"
+                android:layout_weight="1"
+                android:text="צילום"
+                app:icon="@drawable/ic_lib_camera"
+                app:iconGravity="textStart" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnGallery"
-                android:layout_width="wrap_content"
+                style="@style/Widget.Library.Button.Tonal"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="מהגלרייה"
-                android:backgroundTint="#25314C" />
+                android:layout_marginStart="6dp"
+                android:layout_weight="1"
+                android:text="מהגלריה"
+                app:icon="@drawable/ic_lib_image"
+                app:iconGravity="textStart" />
         </LinearLayout>
 
-        <!-- שדות הזנה וצפייה -->
-        <EditText
-            android:id="@+id/etTitle"
+        <!-- כרטיס: פרטים כלליים -->
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="שם הספר"
-            android:textColorHint="#AECBFA"
-            android:textColor="#FFFFFF"
-            android:layout_marginBottom="12dp" />
+            android:layout_marginTop="24dp">
 
-        <EditText
-            android:id="@+id/etAuthor"
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="18dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="14dp"
+                    android:text="על הספר"
+                    android:textAppearance="@style/TextAppearance.Library.Section" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="שם הספר"
+                    app:startIconDrawable="@drawable/ic_lib_book">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etTitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textCapSentences"
+                        android:textColor="@color/lib_text" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:hint="שם הכותב/ת"
+                    app:startIconDrawable="@drawable/ic_lib_person">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etAuthor"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textPersonName|textCapWords"
+                        android:textColor="@color/lib_text" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:hint="ז'אנר"
+                    app:startIconDrawable="@drawable/ic_lib_category">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etGenre"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="text"
+                        android:textColor="@color/lib_text" />
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- כרטיס: התקדמות הקריאה -->
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="שם הכותב/ת"
-            android:textColorHint="#AECBFA"
-            android:textColor="#FFFFFF"
-            android:layout_marginBottom="12dp" />
+            android:layout_marginTop="16dp">
 
-        <EditText
-            android:id="@+id/etTotalPages"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="מספר עמודים כולל"
-            android:inputType="number"
-            android:textColorHint="#AECBFA"
-            android:textColor="#FFFFFF"
-            android:layout_marginBottom="12dp" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="18dp">
 
-        <EditText
-            android:id="@+id/etCurrentPage"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="עמוד נוכחי שהגעת אליו"
-            android:inputType="number"
-            android:textColorHint="#AECBFA"
-            android:textColor="#FFFFFF"
-            android:layout_marginBottom="12dp" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="14dp"
+                    android:text="התקדמות הקריאה"
+                    android:textAppearance="@style/TextAppearance.Library.Section" />
 
-        <EditText
-            android:id="@+id/etGenre"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="ז'אנר הספר"
-            android:textColorHint="#AECBFA"
-            android:textColor="#FFFFFF"
-            android:layout_marginBottom="12dp" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
 
-        <EditText
-            android:id="@+id/etStatus"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="סטטוס קריאה (wantToRead / reading / finished)"
-            android:textColorHint="#AECBFA"
-            android:textColor="#FFFFFF"
-            android:layout_marginBottom="24dp" />
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="6dp"
+                        android:layout_weight="1"
+                        android:hint="עמוד נוכחי"
+                        app:startIconDrawable="@drawable/ic_lib_bookmark">
 
-        <Button
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etCurrentPage"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="number"
+                            android:textColor="@color/lib_text" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="6dp"
+                        android:layout_weight="1"
+                        android:hint="סה״כ עמודים"
+                        app:startIconDrawable="@drawable/ic_lib_pages">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etTotalPages"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="number"
+                            android:textColor="@color/lib_text" />
+                    </com.google.android.material.textfield.TextInputLayout>
+                </LinearLayout>
+
+                <!-- סטטוס קריאה: רשימה נפתחת -->
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.Library.TextInput.Dropdown"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:hint="סטטוס קריאה"
+                    app:startIconDrawable="@drawable/ic_lib_flag">
+
+                    <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                        android:id="@+id/etStatus"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="none"
+                        android:textColor="@color/lib_text"
+                        app:simpleItems="@array/reading_statuses" />
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- כפתור שמירה -->
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnSave"
             android:layout_width="match_parent"
-            android:layout_height="55dp"
-            android:text="עדכן פרטים"
-            android:textSize="18sp"
-            android:backgroundTint="#3D5AFE" />
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="שמירת השינויים"
+            app:icon="@drawable/ic_lib_check"
+            app:iconGravity="textStart" />
 
     </LinearLayout>
 </ScrollView>

@@ -1,87 +1,93 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- מסך הרשמה -->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#0A192F"
+    android:background="@color/lib_bg"
+    android:fillViewport="true"
+    android:layoutDirection="rtl"
     tools:context=".RegisterActivity">
 
-    <!-- כותרת ראשית -->
-    <TextView
-        android:id="@+id/tvRegisterTitle"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="יצירת חשבון חדש"
-        android:textSize="26sp"
-        android:textStyle="bold"
-        android:textColor="#FFFFFF"
-        android:layout_marginTop="80dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        android:orientation="vertical"
+        android:paddingStart="24dp"
+        android:paddingTop="56dp"
+        android:paddingEnd="24dp"
+        android:paddingBottom="32dp">
 
-    <!-- כותרת משנה -->
-    <TextView
-        android:id="@+id/tvRegisterSubtitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="הירשמי כדי להתחיל"
-        android:textSize="14sp"
-        android:textColor="#B0BEC5"
-        android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@+id/tvRegisterTitle"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        <!-- לוגו -->
+        <ImageView
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:background="@drawable/bg_logo_tile"
+            android:contentDescription="@null"
+            android:padding="16dp"
+            android:src="@drawable/ic_lib_book"
+            app:tint="@color/lib_on_primary" />
 
-    <!-- שדה אימייל / שם משתמש -->
-    <EditText
-        android:id="@+id/etRegisterEmail"
-        android:layout_width="0dp"
-        android:layout_height="54dp"
-        android:hint="אימייל (שם משתמש)"
-        android:textColor="#FFFFFF"
-        android:textColorHint="#78909C"
-        android:backgroundTint="#3D5AFE"
-        android:inputType="textEmailAddress"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:layout_marginTop="48dp"
-        app:layout_constraintTop_toBottomOf="@+id/tvRegisterSubtitle"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        <TextView
+            android:id="@+id/tvRegisterTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:text="יצירת חשבון"
+            android:textAppearance="@style/TextAppearance.Library.Display" />
 
-    <!-- שדה סיסמה -->
-    <EditText
-        android:id="@+id/etRegisterPassword"
-        android:layout_width="0dp"
-        android:layout_height="54dp"
-        android:hint="סיסמה (לפחות 6 תווים)"
-        android:textColor="#FFFFFF"
-        android:textColorHint="#78909C"
-        android:backgroundTint="#3D5AFE"
-        android:inputType="textPassword"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:layout_marginTop="16dp"
-        app:layout_constraintTop_toBottomOf="@+id/etRegisterEmail"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        <TextView
+            android:id="@+id/tvRegisterSubtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="כמה פרטים, ומתחילים לבנות את הספרייה שלך."
+            android:textAppearance="@style/TextAppearance.Library.Body" />
 
-    <!-- כפתור הרשמה -->
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnRegisterSubmit"
-        android:layout_width="0dp"
-        android:layout_height="54dp"
-        android:text="הירשמי"
-        android:textSize="15sp"
-        android:textStyle="bold"
-        app:backgroundTint="#3D5AFE"
-        app:cornerRadius="14dp"
-        android:layout_marginTop="24dp"
-        app:layout_constraintTop_toBottomOf="@+id/etRegisterPassword"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        <!-- שדה אימייל -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="36dp"
+            android:hint="אימייל"
+            app:startIconDrawable="@drawable/ic_lib_mail">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etRegisterEmail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textEmailAddress"
+                android:textColor="@color/lib_text" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- שדה סיסמה -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:hint="סיסמה"
+            app:endIconMode="password_toggle"
+            app:helperText="לפחות 6 תווים"
+            app:helperTextTextColor="@color/lib_text_muted"
+            app:startIconDrawable="@drawable/ic_lib_lock">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etRegisterPassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPassword"
+                android:textColor="@color/lib_text" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- כפתור הרשמה -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnRegisterSubmit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:text="יצירת החשבון" />
+
+    </LinearLayout>
+</ScrollView>

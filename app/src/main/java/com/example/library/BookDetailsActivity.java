@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -40,15 +41,12 @@ public class BookDetailsActivity extends AppCompatActivity {
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
                 if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
-                    imageUri = result.getData().getData();
-                    if (imageUri != null) {
-                        try {
-                            final int takeFlags = Intent.FLAG_GRANT_READ_URI_PERMISSION;
-                            getContentResolver().takePersistableUriPermission(imageUri, takeFlags);
-                        } catch (SecurityException e) {
-                            e.printStackTrace();
-                        }
-                        ivBookCover.setImageURI(imageUri);
+                    Uri pickedUri = result.getData().getData();
+                    if (pickedUri != null) {
+                        // שמירת עותק של התמונה בתוך האפליקציה, כדי שלא נאבד את ההרשאה אליה
+                        Uri localUri = ImageUtils.copyToAppStorage(this, pickedUri, "book_covers");
+                        imageUri = (localUri != null) ? localUri : pickedUri;
+                        ImageUtils.showImage(ivBookCover, imageUri, R.drawable.placeholder_book_cover);
                     }
                 }
             }
@@ -129,6 +127,15 @@ public class BookDetailsActivity extends AppCompatActivity {
         }
     }
 
+    // שדה הסטטוס הוא רשימה נפתחת; setText(text, false) מציג את הערך בלי לסנן את רשימת האפשרויות
+    private void setStatusText(String text) {
+        if (etStatus instanceof AutoCompleteTextView) {
+            ((AutoCompleteTextView) etStatus).setText(text, false);
+        } else {
+            etStatus.setText(text);
+        }
+    }
+
     // טעינת פרטי הספר מ-Firestore והצגת התמונה המקומית על המסך
     private void loadBookDetails() {
         db.collection("books").document(bookId).get()
@@ -149,13 +156,13 @@ public class BookDetailsActivity extends AppCompatActivity {
                         String savedStatus = documentSnapshot.getString("status");
                         if (savedStatus != null) {
                             if (savedStatus.equals("finished")) {
-                                etStatus.setText("סיימתי");
+                                setStatusText("סיימתי");
                             } else if (savedStatus.equals("reading")) {
-                                etStatus.setText("קורא");
+                                setStatusText("קורא");
                             } else if (savedStatus.equals("want_to_read")) {
-                                etStatus.setText("לקריאה");
+                                setStatusText("לקריאה");
                             } else {
-                                etStatus.setText(savedStatus);
+                                setStatusText(savedStatus);
                             }
                         }
 
@@ -163,7 +170,10 @@ public class BookDetailsActivity extends AppCompatActivity {
                         String savedImageUrl = documentSnapshot.getString("coverImageUrl");
                         if (savedImageUrl != null && !savedImageUrl.isEmpty()) {
                             imageUri = Uri.parse(savedImageUrl);
-                            ivBookCover.setImageURI(imageUri);
+                            // אם אי אפשר לפתוח את התמונה השמורה, מציגים ברירת מחדל ולא קורסים
+                            if (!ImageUtils.showImage(ivBookCover, imageUri, R.drawable.placeholder_book_cover)) {
+                                imageUri = null;
+                            }
                         }
                     }
                 })

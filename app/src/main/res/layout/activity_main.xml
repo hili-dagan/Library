@@ -1,88 +1,150 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- מסך פתיחה: בחירה בין יצירת חשבון להתחברות -->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#0A192F"
+    android:background="@color/lib_bg"
+    android:layoutDirection="rtl"
     tools:context=".MainActivity">
 
-    <!-- לוגו או אייקון עליון (מוסיף המון מקצועיות) -->
-    <ImageView
-        android:id="@+id/ivLogo"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
-        android:src="@android:drawable/ic_menu_compass"
-        app:tint="#3D5AFE"
-        android:layout_marginBottom="16dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/tvWelcome"
-        app:layout_constraintStart_toStartOf="parent"
+    <!-- מדף ספרים דקורטיבי -->
+    <LinearLayout
+        android:id="@+id/llShelf"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="bottom"
+        android:layoutDirection="ltr"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@+id/vShelfLine"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintVertical_chainStyle="packed" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.45"
+        app:layout_constraintVertical_chainStyle="packed">
+
+        <View
+            android:layout_width="22dp"
+            android:layout_height="84dp"
+            android:layout_marginEnd="5dp"
+            android:background="@drawable/bg_spine"
+            android:backgroundTint="@color/lib_spine_4" />
+
+        <View
+            android:layout_width="28dp"
+            android:layout_height="104dp"
+            android:layout_marginEnd="5dp"
+            android:background="@drawable/bg_spine"
+            android:backgroundTint="@color/lib_spine_1" />
+
+        <View
+            android:layout_width="18dp"
+            android:layout_height="72dp"
+            android:layout_marginEnd="5dp"
+            android:background="@drawable/bg_spine"
+            android:backgroundTint="@color/lib_spine_5" />
+
+        <View
+            android:layout_width="26dp"
+            android:layout_height="96dp"
+            android:layout_marginEnd="5dp"
+            android:background="@drawable/bg_spine"
+            android:backgroundTint="@color/lib_spine_3" />
+
+        <!-- ספר נוטה -->
+        <View
+            android:layout_width="24dp"
+            android:layout_height="90dp"
+            android:layout_marginStart="10dp"
+            android:background="@drawable/bg_spine"
+            android:backgroundTint="@color/lib_spine_2"
+            android:rotation="14"
+            android:transformPivotX="0dp"
+            android:transformPivotY="90dp" />
+    </LinearLayout>
+
+    <View
+        android:id="@+id/vShelfLine"
+        android:layout_width="200dp"
+        android:layout_height="6dp"
+        android:background="@drawable/bg_shelf"
+        app:layout_constraintBottom_toTopOf="@+id/tvWelcome"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/llShelf" />
 
     <!-- כותרת ראשית -->
     <TextView
         android:id="@+id/tvWelcome"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="שלום אורח"
-        android:textSize="26sp"
-        android:textStyle="bold"
-        android:textColor="#FFFFFF"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintTop_toBottomOf="@+id/ivLogo"
-        app:layout_constraintBottom_toTopOf="@+id/tvSubtitle"
+        android:layout_marginTop="36dp"
+        android:text="הספרייה שלי"
+        android:textAppearance="@style/TextAppearance.Library.Display"
+        app:layout_constraintBottom_toTopOf="@+id/tvTagline"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/vShelfLine" />
+
+    <TextView
+        android:id="@+id/tvTagline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:fontFamily="serif"
+        android:text="לקרוא. לעקוב. לזכור."
+        android:textColor="@color/lib_accent"
+        android:textSize="18sp"
+        android:textStyle="italic"
+        app:layout_constraintBottom_toTopOf="@+id/tvSubtitle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvWelcome" />
 
     <!-- כותרת משנה -->
     <TextView
         android:id="@+id/tvSubtitle"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="בחר אפשרות להמשך"
-        android:textSize="14sp"
-        android:textColor="#B0BEC5"
-        android:layout_marginBottom="36dp"
-        app:layout_constraintTop_toBottomOf="@+id/tvWelcome"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="40dp"
+        android:gravity="center"
+        android:text="מקום אחד לכל הספרים שלך, להתקדמות בקריאה ולמה שנשאר איתך מכל ספר"
+        android:layout_marginBottom="24dp"
+        android:textAppearance="@style/TextAppearance.Library.Body"
         app:layout_constraintBottom_toTopOf="@+id/btnNewUser"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/tvTagline" />
 
-    <!-- כפתור ראשי למשתמש חדש (מודגש בעיצוב מלא) -->
+    <!-- כפתור ראשי: משתמש חדש -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnNewUser"
         android:layout_width="0dp"
-        android:layout_height="54dp"
-        android:text="יצירת חשבון חדש"
-        android:textSize="15sp"
-        android:textStyle="bold"
-        app:backgroundTint="#3D5AFE"
-        app:cornerRadius="14dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
         android:layout_marginBottom="12dp"
-        app:layout_constraintTop_toBottomOf="@+id/tvSubtitle"
+        android:text="יצירת חשבון חדש"
         app:layout_constraintBottom_toTopOf="@+id/btnExistingUser"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
-    <!-- כפתור משני למשתמש קיים (עיצוב Outlined מסגרת נקה) -->
+    <!-- כפתור משני: משתמש קיים -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnExistingUser"
-        style="?attr/materialButtonOutlinedStyle"
+        style="@style/Widget.Library.Button.Outlined"
         android:layout_width="0dp"
-        android:layout_height="54dp"
-        android:text="התחברות לחשבון קיים"
-        android:textSize="15sp"
-        android:textStyle="bold"
-        android:textColor="#FFFFFF"
-        app:strokeColor="#3D5AFE"
-        app:strokeWidth="2dp"
-        app:cornerRadius="14dp"
-        app:layout_constraintTop_toBottomOf="@+id/btnNewUser"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="32dp"
+        android:text="כבר יש לי חשבון"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

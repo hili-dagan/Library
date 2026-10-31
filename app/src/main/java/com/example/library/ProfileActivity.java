@@ -37,15 +37,12 @@ public class ProfileActivity extends AppCompatActivity {
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
                 if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
-                    profileImageUri = result.getData().getData();
-                    if (profileImageUri != null) {
-                        try {
-                            final int takeFlags = Intent.FLAG_GRANT_READ_URI_PERMISSION;
-                            getContentResolver().takePersistableUriPermission(profileImageUri, takeFlags);
-                        } catch (SecurityException e) {
-                            e.printStackTrace();
-                        }
-                        ivProfileImage.setImageURI(profileImageUri);
+                    Uri pickedUri = result.getData().getData();
+                    if (pickedUri != null) {
+                        // שמירת עותק של התמונה בתוך האפליקציה, כדי שלא נאבד את ההרשאה אליה
+                        Uri localUri = ImageUtils.copyToAppStorage(this, pickedUri, "profile_images");
+                        profileImageUri = (localUri != null) ? localUri : pickedUri;
+                        ImageUtils.showImage(ivProfileImage, profileImageUri, R.drawable.placeholder_avatar);
                     }
                 }
             }
@@ -106,7 +103,10 @@ public class ProfileActivity extends AppCompatActivity {
                         String imageUrl = documentSnapshot.getString("profileImageUrl");
                         if (imageUrl != null && !imageUrl.isEmpty()) {
                             profileImageUri = Uri.parse(imageUrl);
-                            ivProfileImage.setImageURI(profileImageUri);
+                            // אם אי אפשר לפתוח את התמונה השמורה, מציגים ברירת מחדל ולא קורסים
+                            if (!ImageUtils.showImage(ivProfileImage, profileImageUri, R.drawable.placeholder_avatar)) {
+                                profileImageUri = null;
+                            }
                         }
                     }
                 })
