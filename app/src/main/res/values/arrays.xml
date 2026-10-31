@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- אפשרויות סטטוס הקריאה. הטקסטים זהים למה שהקוד ב-BookDetailsActivity שומר וטוען -->
+    <string-array name="reading_statuses">
+        <item>לקריאה</item>
+        <item>קורא</item>
+        <item>סיימתי</item>
+    </string-array>
+</resources>

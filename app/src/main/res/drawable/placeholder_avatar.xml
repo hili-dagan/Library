@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- תמונת פרופיל ברירת מחדל -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="120dp"
+    android:height="120dp"
+    android:viewportWidth="120"
+    android:viewportHeight="120">
+    <path android:fillColor="@color/lib_surface_alt"
+        android:pathData="M0,0h120v120h-120z" />
+    <group android:translateX="24" android:translateY="28" android:scaleX="3" android:scaleY="3">
+        <path android:fillColor="@color/lib_text_muted" android:fillAlpha="0.55"
+            android:pathData="M12,12c2.21,0 4,-1.79 4,-4s-1.79,-4 -4,-4 -4,1.79 -4,4 1.79,4 4,4zM12,14c-2.67,0 -8,1.34 -8,4v2h16v-2c0,-2.66 -5.33,-4 -8,-4z" />
+    </group>
+</vector>

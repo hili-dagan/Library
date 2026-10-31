@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- "כריכה" קטנה לפריט ברשימה, כולל שדרה כהה בצד -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="rectangle">
+            <corners android:radius="8dp" />
+            <gradient
+                android:angle="315"
+                android:startColor="@color/lib_primary"
+                android:endColor="@color/lib_primary_dark" />
+        </shape>
+    </item>
+    <item android:width="6dp" android:gravity="left|fill_vertical">
+        <shape android:shape="rectangle">
+            <corners android:topLeftRadius="8dp" android:bottomLeftRadius="8dp"
+                android:topRightRadius="0dp" android:bottomRightRadius="0dp" />
+            <solid android:color="#33000000" />
+        </shape>
+    </item>
+</layer-list>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- אותה פלטה במצב כהה -->
+    <color name="lib_bg">#14130F</color>
+    <color name="lib_surface">#1E1C17</color>
+    <color name="lib_surface_alt">#2A2720</color>
+    <color name="lib_outline">#39342B</color>
+
+    <color name="lib_text">#F3EEE5</color>
+    <color name="lib_text_muted">#B2A897</color>
+
+    <color name="lib_primary">#8FD1B6</color>
+    <color name="lib_primary_dark">#5FA98C</color>
+    <color name="lib_on_primary">#062A1F</color>
+    <color name="lib_primary_soft">#1F3A31</color>
+
+    <color name="lib_accent">#E9A862</color>
+    <color name="lib_on_accent">#2B1A07</color>
+    <color name="lib_accent_soft">#3A2B1A</color>
+
+    <color name="lib_danger">#FF9E8C</color>
+    <color name="lib_danger_soft">#3D221D</color>
+
+    <color name="lib_spine_1">#3E7A66</color>
+    <color name="lib_spine_2">#D48F48</color>
+    <color name="lib_spine_3">#A9503F</color>
+    <color name="lib_spine_4">#4F7096</color>
+    <color name="lib_spine_5">#D9B36C</color>
+</resources>
